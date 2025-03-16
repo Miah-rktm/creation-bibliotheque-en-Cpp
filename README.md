@@ -1,6 +1,6 @@
-#Projet de creation bibliothèque similaires a Numpyy mais en c++
+##Projet de creation bibliothèque similaires a Numpyy mais en c++
 
-Gestion de tableau n-dimensionnels(mais mon code est juste valable de 1D->3D)
+-Gestion de tableau n-dimensionnels(mais mon code est juste valable de 1D->3D)
 Les fonctionnalités finies:
 .Creation tableau de 1D-3D
 .np.zeros
