@@ -14,5 +14,9 @@ Les fonctionnalités finies:
 .arr.flatten
 .np.arange
 .np.linspace
+.np.concatenate([arr1, arr2], axis=0) → Concaténation sur une dimension
+. np.hstack([arr1, arr2]) → Concaténation horizontale
+. np.vstack([arr1, arr2]) → Concaténation verticale
+.np.random.rand(3,3)
 J'ai pas encore gérer les erreurs et aussi la syntaxe semblable a Python mais j'ai juste ressembler le nom des fonctions
 Donc plus d'améliorations(gestion d'erreurs+meme syntaxe+ndimensions)
