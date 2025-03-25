@@ -1,6 +1,6 @@
 #include "ndarray.h"
 #include <iomanip>
-
+#include <random>
 template <typename T>
 NDarray<T>::NDarray(std::initializer_list<size_t> dims, T value)
 {
@@ -161,4 +161,101 @@ NDarray<T> NDarray<T>::flatten() const
         flat.tab[i] = tab[i];
     }
     return flat;
+}
+template <typename T>
+NDarray<T> NDarray<T>::concatenate(const NDarray<T> &other, size_t axis)
+{
+    std::vector<size_t> shape1 = this->getShape();
+    std::vector<size_t> shape2 = other.getShape();
+
+    if (shape1.size() != shape2.size())
+    {
+        throw std::runtime_error("Les tableaux doivent avoir le même nombre de dimensions");
+    }
+
+    std::vector<size_t> new_shape = shape1;
+    new_shape[axis] += shape2[axis]; // Agrandit la dimension spécifiée par axis
+
+    NDarray<T> result(new_shape, T()); // Utilisation du nouveau constructeur:creation tableau avec la nouvelle forme
+    size_t offset = 0;
+
+    for (size_t i = 0; i < this->getSize(); i++) // Copier les éléments du tableau courant
+    {
+        result.tab[offset++] = this->tab[i];
+    }
+
+    for (size_t i = 0; i < other.getSize(); i++) // Ajouter les éléments de l'autre tableau
+    {
+        result.tab[offset++] = other.tab[i];
+    }
+
+    return result;
+}
+
+template <typename T>
+NDarray<T> NDarray<T>::hstack(const NDarray<T> &other)
+{
+    std::vector<size_t> shape1 = this->getShape();
+    std::vector<size_t> shape2 = other.getShape();
+
+    // si les deux tableaux sont 1D, concatène sur l’axe 0
+    if (shape1.size() == 1 && shape2.size() == 1)
+    {
+        return this->concatenate(other, 0);
+    }
+
+    // Vérifie la compatibilité pour une concaténation horizontale
+    if (shape1[0] != shape2[0])
+    {
+        throw std::runtime_error("Les tableaux doivent avoir le même nombre de lignes pour hstack");
+    }
+
+    return this->concatenate(other, 1); // Concatène sur l’axe des colonnes (axe 1)
+}
+
+template <typename T>
+NDarray<T> NDarray<T>::vstack(const NDarray<T> &other)
+{
+    std::vector<size_t> shape1 = this->getShape();
+    std::vector<size_t> shape2 = other.getShape();
+
+    NDarray<T> arr1_2d = *this; // Copie du tableau courant
+    NDarray<T> arr2_2d = other; // Copie de l'autre tableau
+
+    // Convertit un tableau 1D en 2D (1 ligne) si nécessaire
+    if (shape1.size() == 1)
+    {
+        arr1_2d.reshape({1, shape1[0]});
+    }
+    if (shape2.size() == 1)
+    {
+        arr2_2d.reshape({1, shape2[0]});
+    }
+
+    // Vérifie que les tableaux ont le même nombre de colonnes
+    if (arr1_2d.getShape()[1] != arr2_2d.getShape()[1])
+    {
+        throw std::runtime_error("Les tableaux doivent avoir le même nombre de colonnes pour vstack");
+    }
+
+    return arr1_2d.concatenate(arr2_2d, 0); // Concatène verticalement (axe 0)
+}
+template <>
+NDarray<double> NDarray<double>::rand(std::initializer_list<size_t> dims)
+{
+    size_t tsize = 1;
+    for (size_t d : dims)
+        tsize *= d; // Calcule la taille totale du tableau
+
+    // Initialisation du générateur de nombres aléatoires
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0.0, 1.0); // Distribution uniforme entre 0 et 1
+
+    NDarray<double> result(dims, 0.0); // Crée un tableau initialisé à 0
+    for (size_t i = 0; i < tsize; i++)
+    {
+        result.tab[i] = dis(gen); // Remplit avec des valeurs aléatoires
+    }
+    return result;
 }
