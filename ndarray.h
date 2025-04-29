@@ -113,9 +113,13 @@ public:
 
     // Accès direct (1D seulement)
     // Accède directement à un élément pour un tableau 1D (version modifiable)
-    T &operator[](size_t index) { return data[index]; }
+    T &operator[](size_t index) {
+        return data[index]; 
+    }
     // Accède directement à un élément pour un tableau 1D (version constante)
-    const T &operator[](size_t index) const { return data[index]; }
+    const T &operator[](size_t index) const { 
+        return data[index]; 
+    }
 
 private:
     // Méthode récursive pour afficher les tableaux multi-dimensionnels
